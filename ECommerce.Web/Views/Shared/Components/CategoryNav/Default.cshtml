@@ -1,0 +1,8 @@
+@model IEnumerable<ECommerce.Models.Category>
+
+    @foreach (var category in Model)
+{
+    <a href="/Product/Category/@category.Id" class="nav-link text-black hover:opacity-70">
+        @category.Name.ToUpper()
+    </a>
+}

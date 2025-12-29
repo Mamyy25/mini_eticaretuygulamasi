@@ -1,0 +1,133 @@
+﻿@model ECommerce.Models.Product
+
+@{
+    ViewData["Title"] = "Kalıcı Sil";
+}
+
+<div class="max-w-3xl mx-auto px-4 py-12">
+
+    <!-- Başlık -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-semibold text-red-600">⚠️ Kalıcı Silme</h1>
+        <p class="text-gray-600 mt-2">Bu işlem geri alınamaz! Ürün veritabanından tamamen silinecektir.</p>
+    </div>
+
+    <!-- UYARI -->
+    <div class="bg-red-100 border-2 border-red-500 px-6 py-6 mb-6">
+        <div class="flex items-start">
+            <i class="fas fa-exclamation-triangle text-red-600 text-3xl mt-1 mr-4"></i>
+            <div>
+                <h3 class="text-lg font-semibold text-red-800 mb-2">DİKKAT! Kalıcı Silme İşlemi</h3>
+                <ul class="text-sm text-red-800 space-y-1 list-disc list-inside">
+                    <li>Bu ürün <strong>veritabanından tamamen silinecektir</strong></li>
+                    <li>Ürün resmi <strong>sunucudan silinecektir</strong></li>
+                    <li>Bu işlem <strong>geri alınamaz</strong></li>
+                    <li>Silinen ürün <strong>kurtarılamaz</strong></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ürün Detayları -->
+    <div class="bg-white border-2 border-red-200 p-8">
+        <h3 class="text-lg font-semibold text-black mb-4">Silinecek Ürün:</h3>
+
+        <!-- Ürün Resmi -->
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+        <div class="mb-6 text-center">
+            <img src="@Model.ImageUrl" alt="@Model.Name" class="max-w-full h-64 mx-auto object-contain border-2 border-red-200">
+        </div>
+        }
+
+        <dl class="divide-y divide-gray-200">
+            <div class="py-4">
+                <dt class="text-sm font-medium text-gray-700 mb-1">Ürün Adı</dt>
+                <dd class="text-base text-black font-semibold">@Model.Name</dd>
+            </div>
+
+            <div class="py-4">
+                <dt class="text-sm font-medium text-gray-700 mb-1">Açıklama</dt>
+                <dd class="text-base text-gray-600">@Model.Description</dd>
+            </div>
+
+            <div class="py-4 grid grid-cols-2 gap-4">
+                <div>
+                    <dt class="text-sm font-medium text-gray-700 mb-1">Kategori</dt>
+                    <dd class="text-base text-gray-600">@Model.Category?.Name</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-700 mb-1">Fiyat</dt>
+                    <dd class="text-base text-black font-semibold">@Model.Price.ToString("N2") ₺</dd>
+                </div>
+            </div>
+
+            <div class="py-4 grid grid-cols-2 gap-4">
+                <div>
+                    <dt class="text-sm font-medium text-gray-700 mb-1">Stok</dt>
+                    <dd class="text-base text-gray-600">@Model.Stock adet</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-700 mb-1">Durum</dt>
+                    <dd>
+                        @if (Model.IsDeleted)
+                        {
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                            <i class="fas fa-trash mr-1"></i> Silinmiş
+                        </span>
+                        }
+                        else if (Model.IsActive)
+                        {
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <i class="fas fa-check mr-1"></i> Aktif
+                        </span>
+                        }
+                        else
+                        {
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                            <i class="fas fa-pause mr-1"></i> Pasif
+                        </span>
+                        }
+                    </dd>
+                </div>
+            </div>
+
+            <div class="py-4">
+                <dt class="text-sm font-medium text-gray-700 mb-1">Oluşturulma Tarihi</dt>
+                <dd class="text-base text-gray-600">@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</dd>
+            </div>
+
+            @if (Model.UpdatedAt.HasValue)
+            {
+            <div class="py-4">
+                <dt class="text-sm font-medium text-gray-700 mb-1">Son Güncelleme</dt>
+                <dd class="text-base text-gray-600">@Model.UpdatedAt.Value.ToString("dd.MM.yyyy HH:mm")</dd>
+            </div>
+            }
+        </dl>
+
+        <!-- Butonlar -->
+        <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200 mt-6">
+            <a asp-action="Index" class="px-6 py-3 border border-gray-300 text-gray-700 hover:bg-gray-50 text-sm font-medium">
+                <i class="fas fa-arrow-left mr-2"></i>İptal
+            </a>
+
+            <form asp-action="PermanentDelete" method="post" class="inline"
+                  onsubmit="return confirm('⚠️ SON UYARI!\n\nBu ürünü KALICI OLARAK silmek istediğinizden emin misiniz?\n\nÜrün resmi de silinecektir.\n\nBu işlem GERİ ALINAMAZ!');">
+                <input type="hidden" asp-for="Id" />
+                <button type="submit"
+                        class="bg-red-600 text-white px-6 py-3 hover:bg-red-700 text-sm font-bold">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>KALICI OLARAK SİL
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Alt Bilgi -->
+    <div class="mt-6 bg-gray-50 border border-gray-200 px-6 py-4">
+        <div class="text-sm text-gray-600">
+            <strong>💡 İpucu:</strong> Eğer bu ürünü geçici olarak gizlemek istiyorsanız,
+            "Sil" butonunu kullanın. Böylece gerektiğinde geri getirebilirsiniz.
+        </div>
+    </div>
+</div>

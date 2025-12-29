@@ -1,0 +1,93 @@
+@model ECommerce.Models.Order
+
+@{
+    ViewData["Title"] = "Sipariş Başarılı";
+}
+
+<!-- Success Page -->
+<section class="min-h-screen bg-gray-50 py-20">
+    <div class="max-w-2xl mx-auto px-4 text-center">
+        
+        <!-- Success Icon -->
+        <div class="mb-8">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full">
+                <i class="fas fa-check text-4xl text-green-600"></i>
+            </div>
+        </div>
+
+        <!-- Success Message -->
+        <h1 class="text-3xl font-light tracking-tight mb-4">
+            SİPARİŞİNİZ ALINDI!
+        </h1>
+        <p class="text-gray-600 mb-8">
+            Siparişiniz başarıyla oluşturuldu. En kısa sürede kargoya verilecektir.
+        </p>
+
+        <!-- Order Info -->
+        <div class="bg-white p-8 border border-gray-200 mb-8 text-left">
+            <h2 class="text-sm font-semibold uppercase tracking-wider mb-6 text-center">
+                SİPARİŞ DETAYLARI
+            </h2>
+            
+            <div class="space-y-4 mb-6 pb-6 border-b border-gray-200">
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-600">Sipariş Numarası:</span>
+                    <span class="font-semibold">#@Model.Id.ToString("D6")</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-600">Tarih:</span>
+                    <span class="font-medium">@Model.OrderDate.ToString("dd MMMM yyyy HH:mm")</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-600">Teslimat Adresi:</span>
+                    <span class="font-medium text-right max-w-xs">@Model.ShippingAddress</span>
+                </div>
+            </div>
+
+            <!-- Order Items -->
+            <div class="space-y-3 mb-6 pb-6 border-b border-gray-200">
+                @if (Model.OrderItems != null)
+                {
+                    @foreach (var item in Model.OrderItems)
+                    {
+                        <div class="flex justify-between text-sm">
+                            <span>@item.ProductName x @item.Quantity</span>
+                            <span class="font-medium">@((item.Price * item.Quantity).ToString("C0"))</span>
+                        </div>
+                    }
+                }
+            </div>
+
+            <!-- Total -->
+            <div class="flex justify-between text-base font-semibold">
+                <span>TOPLAM</span>
+                <span>@Model.TotalAmount.ToString("C0")</span>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/Order/MyOrders" 
+               class="inline-block bg-black text-white px-12 py-4 text-sm font-medium tracking-wider hover:bg-gray-800">
+                SİPARİŞLERİMİ GÖR
+            </a>
+            <a href="/Product/Index" 
+               class="inline-block border border-black text-black px-12 py-4 text-sm font-medium tracking-wider hover:bg-black hover:text-white">
+                ALIŞVERİŞE DEVAM ET
+            </a>
+        </div>
+
+        <!-- Info -->
+        <div class="mt-12 bg-blue-50 border border-blue-200 p-6 text-sm text-left">
+            <p class="font-medium mb-2">
+                <i class="fas fa-info-circle text-blue-600 mr-2"></i>
+                Bilgilendirme
+            </p>
+            <p class="text-gray-700">
+                Sipariş durumunuz hakkında @Model.User?.Email adresine e-posta gönderilecektir.
+                Kargo takip numaranız oluştuğunda tarafınıza bildirilecektir.
+            </p>
+        </div>
+
+    </div>
+</section>

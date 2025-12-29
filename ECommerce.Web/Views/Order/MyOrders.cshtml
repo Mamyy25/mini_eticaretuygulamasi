@@ -1,0 +1,135 @@
+@model List<ECommerce.Models.Order>
+
+    @{
+    ViewData["Title"] = "Siparişlerim";
+    }
+
+    <!-- Page Header -->
+    <section class="bg-gray-50 py-12">
+        <div class="max-w-6xl mx-auto px-4">
+            <h1 class="text-3xl font-light tracking-tight mb-2">SİPARİŞLERİM</h1>
+            <p class="text-sm text-gray-600">Tüm siparişlerinizi buradan takip edebilirsiniz</p>
+        </div>
+    </section>
+
+    <!-- Orders List -->
+    <section class="max-w-6xl mx-auto px-4 py-12">
+        @if (Model.Any())
+    {
+        <div class="space-y-6">
+            @foreach (var order in Model)
+            {
+            <div class="bg-white border border-gray-200 hover:shadow-lg transition-shadow">
+
+                <!-- Order Header -->
+                <div class="p-6 border-b border-gray-200 bg-gray-50">
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex items-center space-x-6">
+                            <div>
+                                <p class="text-xs text-gray-500 mb-1">SİPARİŞ NO</p>
+                                <p class="font-medium">#@order.Id</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 mb-1">TARİH</p>
+                                <p class="text-sm">@order.OrderDate.ToString("dd MMM yyyy")</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 mb-1">TOPLAM</p>
+                                <p class="font-medium">₺@order.TotalAmount.ToString("N2")</p>
+                            </div>
+                        </div>
+                        <div>
+                            @switch (order.Status)
+                                {
+                                    case "Pending":
+                            <span class="inline-block bg-yellow-100 text-yellow-800 px-4 py-2 text-xs font-medium uppercase tracking-wider">
+                                HAZIRLANIYOR
+                            </span>
+                                        break;
+                                    case "Shipped":
+                            <span class="inline-block bg-blue-100 text-blue-800 px-4 py-2 text-xs font-medium uppercase tracking-wider">
+                                KARGODA
+                            </span>
+                                        break;
+                                    case "Delivered":
+                            <span class="inline-block bg-green-100 text-green-800 px-4 py-2 text-xs font-medium uppercase tracking-wider">
+                                TESLİM EDİLDİ
+                            </span>
+                                        break;
+                                    case "Cancelled":
+                            <span class="inline-block bg-red-100 text-red-800 px-4 py-2 text-xs font-medium uppercase tracking-wider">
+                                İPTAL EDİLDİ
+                            </span>
+                                        break;
+                                    default:
+                            <span class="inline-block bg-gray-100 text-gray-800 px-4 py-2 text-xs font-medium uppercase tracking-wider">
+                                @order.Status
+                            </span>
+                                        break;
+                                }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Items -->
+                <div class="p-6">
+                    <div class="space-y-4 mb-6">
+                        @foreach (var item in order.OrderItems.Take(3))
+                            {
+                        <div class="flex items-center space-x-4">
+                            <div class="w-16 h-16 bg-gray-100 flex-shrink-0">
+                                @if (!string.IsNullOrEmpty(item.Product?.ImageUrl))
+                                        {
+                                <img src="@item.Product.ImageUrl" alt="@item.ProductName" class="w-full h-full object-cover" />
+                                        }
+                                        else
+                                        {
+                                <div class="flex items-center justify-center h-full">
+                                    <i class="fas fa-image text-gray-300"></i>
+                                </div>
+                                        }
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium text-sm">@item.ProductName</p>
+                                <p class="text-xs text-gray-600">@item.Quantity adet</p>
+                            </div>
+                            <p class="text-sm font-medium">₺@item.Price.ToString("N2")</p>
+                        </div>
+                            }
+                        @if (order.OrderItems.Count > 3)
+                            {
+                        <p class="text-sm text-gray-500">+ @(order.OrderItems.Count - 3) ürün daha...</p>
+                            }
+                    </div>
+
+                    <div class="flex space-x-3">
+                        <a asp-action="Details" asp-route-id="@order.Id"
+                           class="flex-1 text-center border border-gray-300 text-black px-6 py-3 text-sm font-medium tracking-wider hover:bg-gray-50">
+                            DETAYLARI GÖR
+                        </a>
+                        @if (order.Status == "Pending")
+                            {
+                        <button class="px-6 py-3 border border-red-300 text-red-600 text-sm font-medium hover:bg-red-50">
+                            İPTAL ET
+                        </button>
+                            }
+                    </div>
+                </div>
+
+            </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-16 bg-gray-50">
+            <i class="fas fa-shopping-bag text-6xl text-gray-300 mb-4"></i>
+            <h2 class="text-2xl font-light mb-2">Henüz Siparişiniz Yok</h2>
+            <p class="text-gray-600 mb-8">Alışverişe başlamak için ürünlerimize göz atın</p>
+            <a asp-controller="Product" asp-action="Index"
+               class="inline-block bg-black text-white px-8 py-3 text-sm font-medium tracking-wider hover:bg-gray-800">
+                ÜRÜNLERİ KEŞFET
+            </a>
+        </div>
+    }
+    </section>

@@ -1,0 +1,119 @@
+﻿@model ECommerce.Models.Product
+
+@{
+    ViewData["Title"] = "Yeni Ürün Ekle";
+}
+
+<!-- Page Header -->
+<section class="bg-gray-50 py-12">
+    <div class="max-w-3xl mx-auto px-4">
+        <h1 class="text-3xl font-light tracking-tight mb-2">YENİ ÜRÜN EKLE</h1>
+        <p class="text-sm text-gray-600">Aşağıdaki formu doldurarak yeni ürün ekleyebilirsiniz</p>
+    </div>
+</section>
+
+<!-- Form -->
+<section class="max-w-3xl mx-auto px-4 py-12">
+    <form asp-action="Create" method="post" class="bg-white border border-gray-200 p-8">
+
+        <div asp-validation-summary="ModelOnly" class="bg-red-50 border border-red-200 text-red-800 px-6 py-4 mb-6 text-sm"></div>
+
+        <!-- Ürün Adı -->
+        <div class="mb-6">
+            <label asp-for="Name" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">
+                ÜRÜN ADI *
+            </label>
+            <input asp-for="Name"
+                   class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-black text-sm"
+                   placeholder="Ürün adını girin" />
+            <span asp-validation-for="Name" class="text-red-600 text-xs mt-1 block"></span>
+        </div>
+
+        <!-- Açıklama -->
+        <div class="mb-6">
+            <label asp-for="Description" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">
+                AÇIKLAMA *
+            </label>
+            <textarea asp-for="Description"
+                      rows="4"
+                      class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-black text-sm resize-none"
+                      placeholder="Ürün açıklamasını girin"></textarea>
+            <span asp-validation-for="Description" class="text-red-600 text-xs mt-1 block"></span>
+        </div>
+
+        <!-- Fiyat ve Stok -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+                <label asp-for="Price" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">
+                    FİYAT (₺) *
+                </label>
+                <input asp-for="Price"
+                       type="number"
+                       step="0.01"
+                       class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-black text-sm"
+                       placeholder="0.00" />
+                <span asp-validation-for="Price" class="text-red-600 text-xs mt-1 block"></span>
+            </div>
+
+            <div>
+                <label asp-for="Stock" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">
+                    STOK ADEDI *
+                </label>
+                <input asp-for="Stock"
+                       type="number"
+                       class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-black text-sm"
+                       placeholder="0" />
+                <span asp-validation-for="Stock" class="text-red-600 text-xs mt-1 block"></span>
+            </div>
+        </div>
+
+        <!-- Kategori -->
+        <div class="mb-6">
+            <label asp-for="CategoryId" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">
+                KATEGORİ *
+            </label>
+            <select asp-for="CategoryId"
+                    asp-items="ViewBag.Categories"
+                    class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-black text-sm">
+                <option value="">Kategori seçin</option>
+            </select>
+            <span asp-validation-for="CategoryId" class="text-red-600 text-xs mt-1 block"></span>
+        </div>
+
+        <!-- Görsel URL -->
+        <div class="mb-6">
+            <label asp-for="ImageUrl" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">
+                GÖRSEL URL
+            </label>
+            <input asp-for="ImageUrl"
+                   class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-black text-sm"
+                   placeholder="https://example.com/image.jpg" />
+            <span asp-validation-for="ImageUrl" class="text-red-600 text-xs mt-1 block"></span>
+        </div>
+
+        <!-- Durum -->
+        <div class="mb-8">
+            <label class="flex items-center cursor-pointer">
+                <input asp-for="IsActive" type="checkbox" class="mr-3 w-4 h-4" checked />
+                <span class="text-sm text-gray-700">Ürünü aktif olarak yayınla</span>
+            </label>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex space-x-4">
+            <button type="submit"
+                    class="bg-black text-white px-8 py-3 text-sm font-medium tracking-wider hover:bg-gray-800">
+                <i class="fas fa-save mr-2"></i>ÜRÜNÜ KAYDET
+            </button>
+            <a asp-action="Index"
+               class="border border-gray-300 text-black px-8 py-3 text-sm font-medium tracking-wider hover:bg-gray-50">
+                İPTAL
+            </a>
+        </div>
+
+    </form>
+</section>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

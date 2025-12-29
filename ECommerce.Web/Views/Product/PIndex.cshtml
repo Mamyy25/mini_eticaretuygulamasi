@@ -1,0 +1,89 @@
+@model List<ECommerce.Models.Product>
+
+@{
+    ViewData["Title"] = ViewBag.CategoryName ?? "Tüm Ürünler";
+}
+
+<!-- Page Header -->
+<section class="bg-gray-50 py-12">
+    <div class="max-w-7xl mx-auto px-4">
+        <h1 class="text-3xl font-light tracking-tight text-center">
+            @ViewData["Title"]
+        </h1>
+    </div>
+</section>
+
+<!-- Products Grid -->
+<section class="max-w-7xl mx-auto px-4 py-12">
+    
+    @if (Model == null || !Model.Any())
+    {
+        <div class="text-center py-20">
+            <i class="fas fa-box-open text-6xl text-gray-300 mb-4"></i>
+            <h3 class="text-xl font-medium text-gray-600 mb-2">Ürün Bulunamadı</h3>
+            <p class="text-gray-500 mb-6">Bu kategoride henüz ürün bulunmamaktadır.</p>
+            <a href="/" class="inline-block bg-black text-white px-8 py-3 text-sm font-medium tracking-wider hover:bg-gray-800">
+                ANA SAYFAYA DÖN
+            </a>
+        </div>
+    }
+    else
+    {
+        <!-- Product Count -->
+        <div class="mb-8 text-center">
+            <p class="text-sm text-gray-600">@Model.Count ürün bulundu</p>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            
+            @foreach (var product in Model)
+            {
+                <div class="group bg-white">
+                    <a href="/Product/Details/@product.Id" class="block">
+                        <!-- Product Image -->
+                        <div class="relative overflow-hidden bg-gray-100 mb-4" style="padding-bottom: 133%;">
+                            @if (!string.IsNullOrEmpty(product.ImageUrl))
+                            {
+                                <img src="@product.ImageUrl" 
+                                     alt="@product.Name" 
+                                     class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            }
+                            else
+                            {
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <i class="fas fa-box text-7xl text-gray-300 group-hover:scale-105 transition-transform duration-500"></i>
+                                </div>
+                            }
+                            
+                            <!-- Stock Badge -->
+                            @if (product.Stock <= 5 && product.Stock > 0)
+                            {
+                                <div class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 font-medium">
+                                    SON @product.Stock ADET
+                                </div>
+                            }
+                            else if (product.Stock == 0)
+                            {
+                                <div class="absolute top-2 right-2 bg-gray-800 text-white text-xs px-2 py-1 font-medium">
+                                    TÜKENDI
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Product Info -->
+                        <div class="px-2">
+                            <p class="text-xs text-gray-500 mb-1 uppercase tracking-wider">@product.Category?.Name</p>
+                            <h3 class="text-sm font-medium mb-2 group-hover:opacity-70 transition-opacity">
+                                @product.Name
+                            </h3>
+                            <p class="text-base font-medium">@product.Price.ToString("C0")</p>
+                        </div>
+                    </a>
+                </div>
+            }
+
+        </div>
+    }
+
+</section>

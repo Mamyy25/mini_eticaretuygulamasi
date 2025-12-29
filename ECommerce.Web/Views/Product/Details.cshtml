@@ -1,0 +1,205 @@
+@model ECommerce.Models.Product
+
+@{
+    ViewData["Title"] = "Ürün Detayı";
+}
+
+<!-- Page Header -->
+<section class="bg-gray-50 py-12">
+    <div class="max-w-4xl mx-auto px-4">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-light tracking-tight mb-2">ÜRÜN DETAYI</h1>
+                <p class="text-sm text-gray-600">Ürün #@Model.Id</p>
+            </div>
+            <a asp-action="Index"
+               class="bg-black text-white px-6 py-3 text-sm font-medium tracking-wider hover:bg-gray-800">
+                GERİ DÖN
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Product Details -->
+<section class="max-w-4xl mx-auto px-4 py-12">
+    <div class="bg-white border border-gray-200">
+
+        <!-- Product Image -->
+        <div class="p-8 border-b border-gray-200">
+            <div class="relative overflow-hidden bg-gray-100 mx-auto" style="max-width: 400px; padding-bottom: 400px;">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                <img src="@Model.ImageUrl" alt="@Model.Name" class="absolute inset-0 w-full h-full object-cover" />
+                }
+                else
+                {
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <i class="fas fa-image text-8xl text-gray-300"></i>
+                </div>
+                }
+            </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="p-8">
+
+            <!-- Name & Status -->
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h2 class="text-2xl font-light tracking-tight mb-2">@Model.Name</h2>
+                    <p class="text-sm text-gray-600">@Model.Category?.Name</p>
+                </div>
+                <div>
+                    @if (Model.IsActive)
+                    {
+                    <span class="inline-block bg-green-100 text-green-800 px-4 py-2 text-xs font-medium uppercase tracking-wider">
+                        AKTİF
+                    </span>
+                    }
+                    else
+                    {
+                    <span class="inline-block bg-gray-100 text-gray-800 px-4 py-2 text-xs font-medium uppercase tracking-wider">
+                        PASİF
+                    </span>
+                    }
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-8 pb-8 border-b border-gray-200">
+                <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-700 mb-3">AÇIKLAMA</h3>
+                <p class="text-gray-700 leading-relaxed">@Model.Description</p>
+            </div>
+
+            <!-- Product Details Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+
+                <!-- Price -->
+                <div>
+                    <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">FİYAT</h3>
+                    <p class="text-3xl font-light">₺@Model.Price.ToString("N2")</p>
+                </div>
+
+                <!-- Stock -->
+                <div>
+                    <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">STOK</h3>
+                    <p class="text-2xl font-light">
+                        @if (Model.Stock > 10)
+                        {
+                        <span class="text-green-600">@Model.Stock adet</span>
+                        }
+                        else if (Model.Stock > 0)
+                        {
+                        <span class="text-yellow-600">@Model.Stock adet (Az kaldı)</span>
+                        }
+                        else
+                        {
+                        <span class="text-red-600">Stokta yok</span>
+                        }
+                    </p>
+                </div>
+
+                <!-- Category -->
+                <div>
+                    <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">KATEGORİ</h3>
+                    <p class="text-lg">@Model.Category?.Name</p>
+                </div>
+
+                <!-- Created Date -->
+                <div>
+                    <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">OLUŞTURULMA TARİHİ</h3>
+                    <p class="text-lg">@Model.CreatedAt.ToString("dd MMMM yyyy, HH:mm")</p>
+                </div>
+
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="pt-6 border-t border-gray-200">
+                @if (Context.Session.GetString("IsAdmin") == "true")
+                {
+                    <!-- ADMIN BUTONLARI -->
+                <div class="flex space-x-4">
+                    <a asp-action="Edit" asp-route-id="@Model.Id"
+                       class="flex-1 text-center border border-gray-300 text-black px-6 py-4 text-sm font-medium tracking-wider hover:bg-gray-50">
+                        <i class="fas fa-edit mr-2"></i>DÜZENLE
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@Model.Id"
+                       class="flex-1 text-center border border-red-300 text-red-600 px-6 py-4 text-sm font-medium tracking-wider hover:bg-red-50">
+                        <i class="fas fa-trash mr-2"></i>SİL
+                    </a>
+                </div>
+                }
+                else
+                {
+ <!-- NORMAL KULLANICI BUTONLARI -->
+                @if (Model.Stock > 0 && Model.IsActive)
+                    {
+                <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                    <input type="hidden" name="productId" value="@Model.Id" />
+                    <input type="hidden" name="quantity" value="1" />
+
+                    <div class="flex items-center space-x-4 mb-4">
+                        <!-- Miktar Seçimi -->
+                        <div class="flex items-center border border-gray-300">
+                            <button type="button" onclick="decreaseQuantity()" class="px-4 py-3 hover:bg-gray-100">
+                                <i class="fas fa-minus text-xs"></i>
+                            </button>
+                            <input type="number"
+                                   name="quantity"
+                                   id="quantity"
+                                   value="1"
+                                   min="1"
+                                   max="@Model.Stock"
+                                   class="w-16 text-center border-x border-gray-300 py-3 focus:outline-none" />
+                            <button type="button" onclick="increaseQuantity(@Model.Stock)" class="px-4 py-3 hover:bg-gray-100">
+                                <i class="fas fa-plus text-xs"></i>
+                            </button>
+                        </div>
+
+                        <!-- Sepete Ekle Butonu -->
+                        <button type="submit"
+                                class="flex-1 bg-black text-white px-6 py-4 text-sm font-medium tracking-wider hover:bg-gray-800">
+                            <i class="fas fa-shopping-cart mr-2"></i>SEPETE EKLE
+                        </button>
+                    </div>
+                </form>
+                    }
+                    else if (Model.Stock == 0)
+                    {
+                <button disabled class="w-full bg-gray-300 text-gray-600 px-6 py-4 text-sm font-medium tracking-wider cursor-not-allowed">
+                    <i class="fas fa-times-circle mr-2"></i>STOKTA YOK
+                </button>
+                    }
+                    else
+                    {
+                <button disabled class="w-full bg-gray-300 text-gray-600 px-6 py-4 text-sm font-medium tracking-wider cursor-not-allowed">
+                    ÜRÜN AKTİF DEĞİL
+                </button>
+                    }
+                }
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        function decreaseQuantity() {
+            var input = document.getElementById('quantity');
+            var value = parseInt(input.value);
+            if (value > 1) {
+                input.value = value - 1;
+            }
+        }
+
+        function increaseQuantity(maxStock) {
+            var input = document.getElementById('quantity');
+            var value = parseInt(input.value);
+            if (value < maxStock) {
+                input.value = value + 1;
+            }
+        }
+    </script>
+}

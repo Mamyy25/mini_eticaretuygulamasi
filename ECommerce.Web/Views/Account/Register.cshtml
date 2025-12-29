@@ -1,0 +1,97 @@
+@model ECommerce.Models.User
+
+@{
+    ViewData["Title"] = "Kayıt Ol";
+}
+
+<!-- Page Header -->
+<section class="bg-gray-50 py-12">
+    <div class="max-w-md mx-auto px-4 text-center">
+        <h1 class="text-3xl font-light tracking-tight mb-2">KAYIT OL</h1>
+        <p class="text-sm text-gray-600">Hesap oluşturun ve alışverişe başlayın</p>
+    </div>
+</section>
+
+<!-- Register Form -->
+<section class="max-w-md mx-auto px-4 py-12">
+    <form asp-action="Register" method="post" class="bg-white border border-gray-200 p-8">
+
+        <div asp-validation-summary="ModelOnly" class="bg-red-50 border border-red-200 text-red-800 px-6 py-4 mb-6 text-sm"></div>
+
+        <!-- Ad Soyad -->
+        <div class="mb-6">
+            <label asp-for="FullName" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">
+                AD SOYAD *
+            </label>
+            <input asp-for="FullName"
+                   class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-black text-sm"
+                   placeholder="Adınız ve soyadınız" />
+            <span asp-validation-for="FullName" class="text-red-600 text-xs mt-1 block"></span>
+        </div>
+
+        <!-- Email -->
+        <div class="mb-6">
+            <label asp-for="Email" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">
+                E-POSTA *
+            </label>
+            <input asp-for="Email"
+                   type="email"
+                   class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-black text-sm"
+                   placeholder="ornek@email.com" />
+            <span asp-validation-for="Email" class="text-red-600 text-xs mt-1 block"></span>
+        </div>
+
+        <!-- Telefon -->
+        <div class="mb-6">
+            <label asp-for="Phone" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">
+                TELEFON
+            </label>
+            <input asp-for="Phone"
+                   type="tel"
+                   class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-black text-sm"
+                   placeholder="05XX XXX XX XX" />
+            <span asp-validation-for="Phone" class="text-red-600 text-xs mt-1 block"></span>
+        </div>
+
+        <!-- Şifre -->
+        <div class="mb-6">
+            <label asp-for="Password" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">
+                ŞİFRE *
+            </label>
+            <input asp-for="Password"
+                   type="password"
+                   class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-black text-sm"
+                   placeholder="••••••••" />
+            <span asp-validation-for="Password" class="text-red-600 text-xs mt-1 block"></span>
+        </div>
+
+        <!-- Şifre Tekrar -->
+        <div class="mb-8">
+            <label for="confirmPassword" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">
+                ŞİFRE TEKRAR *
+            </label>
+            <input name="confirmPassword"
+                   type="password"
+                   required
+                   class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-black text-sm"
+                   placeholder="••••••••" />
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit"
+                class="w-full bg-black text-white px-6 py-4 text-sm font-medium tracking-wider hover:bg-gray-800 mb-4">
+            KAYIT OL
+        </button>
+
+        <!-- Login Link -->
+        <div class="text-center text-sm text-gray-600">
+            Zaten hesabınız var mı?
+            <a asp-action="Login" class="text-black font-medium hover:underline">Giriş Yapın</a>
+        </div>
+
+    </form>
+</section>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

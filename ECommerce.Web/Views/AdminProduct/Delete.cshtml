@@ -1,0 +1,103 @@
+﻿@model ECommerce.Models.Product
+
+@{
+    ViewData["Title"] = "Ürün Sil";
+}
+
+<div class="max-w-3xl mx-auto px-4 py-12">
+
+    <!-- Başlık -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-semibold text-black">Ürün Sil</h1>
+        <p class="text-gray-600 mt-2">Bu ürünü silmek istediğinizden emin misiniz?</p>
+    </div>
+
+    <!-- Ürün Detayları -->
+    <div class="bg-white border border-gray-200 p-8">
+
+        <!-- Ürün Resmi -->
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+        <div class="mb-6 text-center">
+            <img src="@Model.ImageUrl" alt="@Model.Name" class="max-w-full h-64 mx-auto object-contain border border-gray-200">
+        </div>
+        }
+
+        <dl class="divide-y divide-gray-200">
+            <div class="py-4">
+                <dt class="text-sm font-medium text-gray-700 mb-1">Ürün Adı</dt>
+                <dd class="text-base text-black font-semibold">@Model.Name</dd>
+            </div>
+
+            <div class="py-4">
+                <dt class="text-sm font-medium text-gray-700 mb-1">Açıklama</dt>
+                <dd class="text-base text-gray-600">@Model.Description</dd>
+            </div>
+
+            <div class="py-4 grid grid-cols-2 gap-4">
+                <div>
+                    <dt class="text-sm font-medium text-gray-700 mb-1">Kategori</dt>
+                    <dd class="text-base text-gray-600">@Model.Category?.Name</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-700 mb-1">Fiyat</dt>
+                    <dd class="text-base text-black font-semibold">@Model.Price.ToString("N2") ₺</dd>
+                </div>
+            </div>
+
+            <div class="py-4 grid grid-cols-2 gap-4">
+                <div>
+                    <dt class="text-sm font-medium text-gray-700 mb-1">Stok</dt>
+                    <dd class="text-base text-gray-600">@Model.Stock adet</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-700 mb-1">Durum</dt>
+                    <dd>
+                        @if (Model.IsActive)
+                        {
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <i class="fas fa-check mr-1"></i> Aktif
+                        </span>
+                        }
+                        else
+                        {
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                            <i class="fas fa-pause mr-1"></i> Pasif
+                        </span>
+                        }
+                    </dd>
+                </div>
+            </div>
+
+            <div class="py-4">
+                <dt class="text-sm font-medium text-gray-700 mb-1">Oluşturulma Tarihi</dt>
+                <dd class="text-base text-gray-600">@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</dd>
+            </div>
+        </dl>
+
+        <!-- Butonlar -->
+        <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200 mt-6">
+            <a asp-action="Index" class="px-6 py-3 border border-gray-300 text-gray-700 hover:bg-gray-50 text-sm font-medium">
+                İptal
+            </a>
+            <form asp-action="Delete" method="post" class="inline">
+                <input type="hidden" asp-for="Id" />
+                <button type="submit"
+                        class="bg-red-600 text-white px-6 py-3 hover:bg-red-700 text-sm font-medium"
+                        onclick="return confirm('Bu ürünü silmek istediğinizden emin misiniz?');">
+                    <i class="fas fa-trash mr-2"></i>Evet, Sil
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bilgi Kutusu -->
+    <div class="mt-6 bg-blue-50 border border-blue-200 px-6 py-4">
+        <div class="flex items-start">
+            <i class="fas fa-info-circle text-blue-600 mt-1 mr-3"></i>
+            <div class="text-sm text-blue-800">
+                <strong>Not:</strong> Bu ürün geçici olarak silinecektir. İsterseniz daha sonra geri getirebilirsiniz.
+            </div>
+        </div>
+    </div>
+</div>

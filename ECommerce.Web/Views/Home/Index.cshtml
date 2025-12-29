@@ -1,0 +1,208 @@
+﻿@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<!-- Hero Section -->
+<section class="relative h-[600px] bg-gray-100 overflow-hidden">
+    <div class="absolute inset-0 flex items-center justify-center">
+        <div class="text-center max-w-2xl px-4">
+            <h1 class="text-5xl md:text-6xl font-light tracking-tight mb-6">
+                YENİ SEZON
+            </h1>
+            <p class="text-lg text-gray-600 mb-8 font-light">
+                Modern ve şık tasarımlarla tanışın
+            </p>
+            <a asp-controller="Product" asp-action="Index"
+               class="inline-block bg-black text-white px-12 py-4 text-sm font-medium tracking-wider hover:bg-gray-800">
+                KOLEKSİYONU KEŞFET
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Categories -->
+<section class="max-w-7xl mx-auto px-4 py-20">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+
+        <!-- Category 1 -->
+        <a asp-controller="Product" asp-action="Category" asp-route-id="1" class="group block">
+            <div class="relative overflow-hidden bg-gray-100 mb-4" style="padding-bottom: 133%;">
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <i class="fas fa-laptop text-6xl text-gray-400 group-hover:scale-110 transition-transform duration-300"></i>
+                </div>
+            </div>
+            <h3 class="text-sm font-medium tracking-wide mb-1">ELEKTRONİK</h3>
+            <p class="text-xs text-gray-500">Son teknoloji ürünler</p>
+        </a>
+
+        <!-- Category 2 -->
+        <a asp-controller="Product" asp-action="Category" asp-route-id="2" class="group block">
+            <div class="relative overflow-hidden bg-gray-100 mb-4" style="padding-bottom: 133%;">
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <i class="fas fa-tshirt text-6xl text-gray-400 group-hover:scale-110 transition-transform duration-300"></i>
+                </div>
+            </div>
+            <h3 class="text-sm font-medium tracking-wide mb-1">GİYİM</h3>
+            <p class="text-xs text-gray-500">Zamansız klasikler</p>
+        </a>
+
+        <!-- Category 3 -->
+        <a asp-controller="Product" asp-action="Category" asp-route-id="3" class="group block">
+            <div class="relative overflow-hidden bg-gray-100 mb-4" style="padding-bottom: 133%;">
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <i class="fas fa-book text-6xl text-gray-400 group-hover:scale-110 transition-transform duration-300"></i>
+                </div>
+            </div>
+            <h3 class="text-sm font-medium tracking-wide mb-1">KİTAP</h3>
+            <p class="text-xs text-gray-500">Özenle seçilmiş eserler</p>
+        </a>
+
+        <!-- Category 4 -->
+        <a asp-controller="Product" asp-action="Category" asp-route-id="4" class="group block">
+            <div class="relative overflow-hidden bg-gray-100 mb-4" style="padding-bottom: 133%;">
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <i class="fas fa-home text-6xl text-gray-400 group-hover:scale-110 transition-transform duration-300"></i>
+                </div>
+            </div>
+            <h3 class="text-sm font-medium tracking-wide mb-1">EV & YAŞAM</h3>
+            <p class="text-xs text-gray-500">Modern yaşam alanları</p>
+        </a>
+
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="bg-gray-50 py-20">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-light tracking-tight mb-3">ÖNE ÇIKAN ÜRÜNLER</h2>
+            <p class="text-sm text-gray-600">Bu haftanın seçkisi</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+
+            <!-- Product 1 -->
+            <div class="group bg-white">
+                <a asp-controller="Product" asp-action="Details" asp-route-id="1" class="block">
+                    <div class="relative overflow-hidden bg-gray-100 mb-4" style="padding-bottom: 133%;">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fas fa-laptop text-7xl text-gray-300 group-hover:scale-105 transition-transform duration-500"></i>
+                        </div>
+                    </div>
+                    <div class="px-2">
+                        <h3 class="text-sm font-medium mb-1">Laptop</h3>
+                        <p class="text-xs text-gray-500 mb-3">15.6 inch ekran, 16GB RAM</p>
+                        <p class="text-base font-medium">₺15.000</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="group bg-white">
+                <a asp-controller="Product" asp-action="Details" asp-route-id="2" class="block">
+                    <div class="relative overflow-hidden bg-gray-100 mb-4" style="padding-bottom: 133%;">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fas fa-mouse text-7xl text-gray-300 group-hover:scale-105 transition-transform duration-500"></i>
+                        </div>
+                    </div>
+                    <div class="px-2">
+                        <h3 class="text-sm font-medium mb-1">Wireless Mouse</h3>
+                        <p class="text-xs text-gray-500 mb-3">Kablosuz optik mouse</p>
+                        <p class="text-base font-medium">₺250</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="group bg-white">
+                <a asp-controller="Product" asp-action="Details" asp-route-id="3" class="block">
+                    <div class="relative overflow-hidden bg-gray-100 mb-4" style="padding-bottom: 133%;">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fas fa-tshirt text-7xl text-gray-300 group-hover:scale-105 transition-transform duration-500"></i>
+                        </div>
+                    </div>
+                    <div class="px-2">
+                        <h3 class="text-sm font-medium mb-1">T-Shirt</h3>
+                        <p class="text-xs text-gray-500 mb-3">Pamuklu tişört</p>
+                        <p class="text-base font-medium">₺150</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Product 4 -->
+            <div class="group bg-white">
+                <a asp-controller="Product" asp-action="Details" asp-route-id="4" class="block">
+                    <div class="relative overflow-hidden bg-gray-100 mb-4" style="padding-bottom: 133%;">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fas fa-book text-7xl text-gray-300 group-hover:scale-105 transition-transform duration-500"></i>
+                        </div>
+                    </div>
+                    <div class="px-2">
+                        <h3 class="text-sm font-medium mb-1">Roman Kitabı</h3>
+                        <p class="text-xs text-gray-500 mb-3">Bestseller roman</p>
+                        <p class="text-base font-medium">₺75</p>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+
+        <div class="text-center mt-12">
+            <a asp-controller="Product" asp-action="Index"
+               class="inline-block border border-black text-black px-12 py-3 text-sm font-medium tracking-wider hover:bg-black hover:text-white">
+                TÜM ÜRÜNLERİ GÖR
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Info Section -->
+<section class="max-w-7xl mx-auto px-4 py-20">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+
+        <div>
+            <div class="mb-4">
+                <i class="fas fa-shipping-fast text-3xl text-gray-400"></i>
+            </div>
+            <h3 class="text-sm font-semibold uppercase tracking-wider mb-2">ÜCRETSİZ KARGO</h3>
+            <p class="text-sm text-gray-600">Tüm siparişlerde ücretsiz teslimat</p>
+        </div>
+
+        <div>
+            <div class="mb-4">
+                <i class="fas fa-lock text-3xl text-gray-400"></i>
+            </div>
+            <h3 class="text-sm font-semibold uppercase tracking-wider mb-2">GÜVENLİ ÖDEME</h3>
+            <p class="text-sm text-gray-600">256-bit SSL şifreleme ile güvenli alışveriş</p>
+        </div>
+
+        <div>
+            <div class="mb-4">
+                <i class="fas fa-undo text-3xl text-gray-400"></i>
+            </div>
+            <h3 class="text-sm font-semibold uppercase tracking-wider mb-2">KOLAY İADE</h3>
+            <p class="text-sm text-gray-600">30 gün içinde ücretsiz iade hakkı</p>
+        </div>
+
+    </div>
+</section>
+
+<!-- Banner -->
+<section class="bg-light-blue py-16">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+        <h2 class="text-3xl font-light tracking-tight mb-4">
+            YENİ ÜYELERİMİZE %20 İNDİRİM
+        </h2>
+        <p class="text-gray-600 mb-8">
+            Bültenimize abone olun ve ilk alışverişinizde indirim kazanın
+        </p>
+        <div class="flex max-w-md mx-auto">
+            <input type="email"
+                   placeholder="E-posta adresiniz"
+                   class="flex-1 px-6 py-4 border border-gray-300 focus:outline-none focus:border-black">
+            <button class="bg-black text-white px-8 py-4 hover:bg-gray-800 font-medium">
+                ABONE OL
+            </button>
+        </div>
+    </div>
+</section>

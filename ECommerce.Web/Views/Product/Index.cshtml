@@ -1,0 +1,305 @@
+﻿@model List<ECommerce.Models.Product>
+
+    @{
+    ViewData["Title"] = "Tüm Ürünler";
+    }
+
+    <!-- Page Header -->
+    <section class="bg-gray-50 py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-light tracking-tight mb-2">
+                        @if (Context.Session.GetString("IsAdmin") == "true")
+                    {
+                        <span>ÜRÜN YÖNETİMİ</span>
+                    }
+                    else if (ViewBag.CategoryName != null)
+                    {
+                        <span>@ViewBag.CategoryName.ToUpper()</span>
+                    }
+                    else
+                    {
+                        <span>TÜM ÜRÜNLER</span>
+                    }
+                    </h1>
+                    <p class="text-sm text-gray-600">
+                        @if (Context.Session.GetString("IsAdmin") == "true")
+                    {
+                        <span>Tüm ürünlerinizi buradan yönetebilirsiniz</span>
+                    }
+                    else if (ViewBag.CategoryName != null && !string.IsNullOrEmpty(ViewBag.SearchTerm))
+                    {
+                        <span>@ViewBag.CategoryName kategorisinde "@ViewBag.SearchTerm" için @Model.Count() sonuç bulundu</span>
+                    }
+                    else if (ViewBag.CategoryName != null)
+                    {
+                        <span>@ViewBag.CategoryName kategorisinde @Model.Count() ürün bulundu</span>
+                    }
+                    else if (!string.IsNullOrEmpty(ViewBag.SearchTerm))
+                    {
+                        <span>"@ViewBag.SearchTerm" için @Model.Count() sonuç bulundu</span>
+                    }
+                    else
+                    {
+                        <span>@Model.Count() ürün bulundu</span>
+                    }
+                    </p>
+                </div>
+                @if (Context.Session.GetString("IsAdmin") == "true")
+            {
+                <a asp-action="Create"
+                   class="bg-black text-white px-8 py-3 text-sm font-medium tracking-wider hover:bg-gray-800">
+                    <i class="fas fa-plus mr-2"></i>YENİ ÜRÜN EKLE
+                </a>
+            }
+            </div>
+        </div>
+    </section>
+
+    <!-- Search & Filter Bar -->
+    <section class="max-w-7xl mx-auto px-4 py-6">
+        <div class="bg-white border border-gray-200 p-6">
+            <form method="get" asp-action="@(ViewBag.CategoryId != null ? "Category" : "Index")" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                <!-- Hidden CategoryId (eğer kategori sayfasındaysak) -->
+                @if (ViewBag.CategoryId != null)
+            {
+                <input type="hidden" name="id" value="@ViewBag.CategoryId" />
+            }
+
+                <!-- Arama Kutusu -->
+                <div class="md:col-span-2">
+                    <div class="relative">
+                        <input type="text"
+                               name="searchTerm"
+                               value="@ViewBag.SearchTerm"
+                               placeholder="Ürün ara... (ürün adı, açıklama, kategori)"
+                               class="w-full px-4 py-3 pl-10 border border-gray-300 focus:outline-none focus:border-black text-sm">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                </div>
+
+                <!-- Sıralama -->
+                <!-- Sıralama -->
+                <div>
+                    <select name="sortBy"
+                            onchange="this.form.submit()"
+                            class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-black text-sm">
+                        <option value="">Sırala</option>
+                        <option value="name_asc" selected="@(ViewBag.SortBy == "name_asc")">İsim (A-Z)</option>
+                        <option value="name_desc" selected="@(ViewBag.SortBy == "name_desc")">İsim (Z-A)</option>
+                        <option value="price_asc" selected="@(ViewBag.SortBy == "price_asc")">Fiyat (Ucuzdan Pahalıya)</option>
+                        <option value="price_desc" selected="@(ViewBag.SortBy == "price_desc")">Fiyat (Pahalıdan Ucuza)</option>
+                        <option value="newest" selected="@(ViewBag.SortBy == "newest")">En Yeni</option>
+                    </select>
+                </div>
+
+                <!-- Ara Butonu (mobile için) -->
+                <div class="md:hidden">
+                    <button type="submit"
+                            class="w-full bg-black text-white px-6 py-3 text-sm font-medium tracking-wider hover:bg-gray-800">
+                        <i class="fas fa-search mr-2"></i>ARA
+                    </button>
+                </div>
+
+            </form>
+
+            <!-- Aktif Filtreler -->
+            @if (!string.IsNullOrEmpty(ViewBag.SearchTerm) || !string.IsNullOrEmpty(ViewBag.SortBy))
+        {
+            <div class="mt-4 pt-4 border-t border-gray-200">
+                <div class="flex items-center flex-wrap gap-2">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-gray-600">Aktif Filtreler:</span>
+
+                    @if (!string.IsNullOrEmpty(ViewBag.SearchTerm))
+                    {
+                    <span class="inline-flex items-center bg-gray-100 text-gray-800 px-3 py-1 text-xs">
+                        Arama: "@ViewBag.SearchTerm"
+                        <a href="@(ViewBag.CategoryId != null ? Url.Action("Category", new { id = ViewBag.CategoryId, sortBy = ViewBag.SortBy }) : Url.Action("Index", new { sortBy = ViewBag.SortBy }))"
+                           class="ml-2 text-red-600 hover:text-red-800">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    </span>
+                    }
+
+                    @if (!string.IsNullOrEmpty(ViewBag.SortBy))
+                    {
+                    <span class="inline-flex items-center bg-gray-100 text-gray-800 px-3 py-1 text-xs">
+                        Sıralama: @(ViewBag.SortBy switch {
+                                "price_asc" => "Ucuzdan Pahalıya",
+                                "price_desc" => "Pahalıdan Ucuza",
+                                "name_asc" => "A-Z",
+                                "name_desc" => "Z-A",
+                                "newest" => "En Yeni",
+                                _ => ""
+                            })
+                        <a href="@(ViewBag.CategoryId != null ? Url.Action("Category", new { id = ViewBag.CategoryId, searchTerm = ViewBag.SearchTerm }) : Url.Action("Index", new { searchTerm = ViewBag.SearchTerm }))"
+                           class="ml-2 text-red-600 hover:text-red-800">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    </span>
+                    }
+
+                    <a href="@(ViewBag.CategoryId != null ? Url.Action("Category", new { id = ViewBag.CategoryId }) : Url.Action("Index"))"
+                       class="text-xs text-red-600 hover:underline ml-2">
+                        Tümünü Temizle
+                    </a>
+                </div>
+            </div>
+        }
+        </div>
+    </section>
+
+    @if (TempData["Success"] != null)
+{
+    <div class="max-w-7xl mx-auto px-4 mt-6">
+        <div class="bg-green-50 border border-green-200 text-green-800 px-6 py-4 text-sm">
+            <i class="fas fa-check-circle mr-2"></i>@TempData["Success"]
+        </div>
+    </div>
+}
+
+    <!-- Products Grid -->
+    <section class="max-w-7xl mx-auto px-4 py-12">
+        @if (Model.Any())
+    {
+        <div class="bg-white border border-gray-200">
+            <!-- Table Header -->
+            <div class="grid grid-cols-12 gap-4 px-6 py-4 bg-gray-50 border-b border-gray-200 text-xs font-semibold uppercase tracking-wider text-gray-600">
+                <div class="col-span-1">ID</div>
+                <div class="col-span-3">ÜRÜN ADI</div>
+                <div class="col-span-2">KATEGORİ</div>
+                <div class="col-span-2">FİYAT</div>
+                <div class="col-span-1">STOK</div>
+                <div class="col-span-1">DURUM</div>
+                <div class="col-span-2 text-center">İŞLEMLER</div>
+            </div>
+
+            <!-- Table Body -->
+            @foreach (var product in Model)
+            {
+            <div class="grid grid-cols-12 gap-4 px-6 py-4 border-b border-gray-100 hover:bg-gray-50 items-center text-sm">
+                <div class="col-span-1 font-medium text-gray-500">
+                    #@product.Id
+                </div>
+
+                <div class="col-span-3">
+                    <div class="font-medium text-black">@product.Name</div>
+                    <div class="text-xs text-gray-500 mt-1">
+                        @if (!string.IsNullOrEmpty(product.Description))
+                            {
+                        @(product.Description.Length > 50 ? product.Description.Substring(0, 50) + "..." : product.Description)
+                            }
+                    </div>
+                </div>
+
+                <div class="col-span-2 text-gray-600">
+                    @product.Category?.Name
+                </div>
+
+                <div class="col-span-2 font-medium">
+                    ₺@product.Price.ToString("N2")
+                </div>
+
+                <div class="col-span-1">
+                    @if (product.Stock > 10)
+                        {
+                    <span class="inline-block bg-green-100 text-green-800 px-3 py-1 text-xs font-medium">
+                        @product.Stock
+                    </span>
+                        }
+                        else if (product.Stock > 0)
+                        {
+                    <span class="inline-block bg-yellow-100 text-yellow-800 px-3 py-1 text-xs font-medium">
+                        @product.Stock
+                    </span>
+                        }
+                        else
+                        {
+                    <span class="inline-block bg-red-100 text-red-800 px-3 py-1 text-xs font-medium">
+                        YOK
+                    </span>
+                        }
+                </div>
+
+                <div class="col-span-1">
+                    @if (product.IsActive)
+                        {
+                    <span class="inline-block bg-green-100 text-green-800 px-3 py-1 text-xs font-medium">
+                        AKTİF
+                    </span>
+                        }
+                        else
+                        {
+                    <span class="inline-block bg-gray-100 text-gray-800 px-3 py-1 text-xs font-medium">
+                        PASİF
+                    </span>
+                        }
+                </div>
+
+                <div class="col-span-2 flex justify-center space-x-2">
+                    <a asp-action="Details" asp-route-id="@product.Id"
+                       class="px-4 py-2 border border-gray-300 text-black hover:bg-gray-50 text-xs font-medium"
+                       title="Detay">
+                        <i class="fas fa-eye"></i>
+                    </a>
+
+                    @if (Context.Session.GetString("IsAdmin") == "true")
+                        {
+                    <a asp-action="Edit" asp-route-id="@product.Id"
+                       class="px-4 py-2 border border-gray-300 text-black hover:bg-gray-50 text-xs font-medium"
+                       title="Düzenle">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@product.Id"
+                       class="px-4 py-2 border border-red-300 text-red-600 hover:bg-red-50 text-xs font-medium"
+                       title="Sil">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                        }
+                        else if (product.Stock > 0 && product.IsActive)
+                        {
+                    <form asp-controller="Cart" asp-action="AddToCart" method="post" class="inline">
+                        <input type="hidden" name="productId" value="@product.Id" />
+                        <input type="hidden" name="quantity" value="1" />
+                        <button type="submit"
+                                class="px-4 py-2 bg-black text-white hover:bg-gray-800 text-xs font-medium"
+                                title="Sepete Ekle">
+                            <i class="fas fa-shopping-cart"></i>
+                        </button>
+                    </form>
+                        }
+                </div>
+            </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-16 bg-gray-50">
+            @if (!string.IsNullOrEmpty(ViewBag.SearchTerm))
+            {
+            <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
+            <h2 class="text-2xl font-light mb-2">Sonuç Bulunamadı</h2>
+            <p class="text-gray-600 mb-6">"@ViewBag.SearchTerm" için sonuç bulunamadı</p>
+            <a href="@(ViewBag.CategoryId != null ? Url.Action("Category", new { id = ViewBag.CategoryId }) : Url.Action("Index"))"
+               class="inline-block bg-black text-white px-8 py-3 text-sm font-medium tracking-wider hover:bg-gray-800">
+                TÜM ÜRÜNLERİ GÖR
+            </a>
+            }
+            else
+            {
+            <i class="fas fa-box-open text-6xl text-gray-300 mb-4"></i>
+            <p class="text-gray-600 mb-6">Henüz ürün eklenmemiş</p>
+            if (Context.Session.GetString("IsAdmin") == "true")
+                {
+            <a asp-action="Create"
+               class="inline-block bg-black text-white px-8 py-3 text-sm font-medium tracking-wider hover:bg-gray-800">
+                İLK ÜRÜNÜNÜZÜ EKLEYİN
+            </a>
+                }
+            }
+        </div>
+    }
+    </section>

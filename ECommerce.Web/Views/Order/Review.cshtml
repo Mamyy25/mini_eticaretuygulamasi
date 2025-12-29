@@ -1,0 +1,179 @@
+﻿@model ECommerce.Models.OrderReviewViewModel
+
+@{
+    ViewData["Title"] = "Sipariş Özeti";
+}
+
+<!-- Progress Bar -->
+<section class="bg-gray-50 py-8">
+    <div class="max-w-4xl mx-auto px-4">
+        <div class="flex items-center justify-between">
+            <div class="flex-1 text-center">
+                <div class="w-10 h-10 bg-green-600 text-white rounded-full mx-auto flex items-center justify-center mb-2">
+                    <i class="fas fa-check"></i>
+                </div>
+                <p class="text-xs font-medium">TESLİMAT</p>
+            </div>
+            <div class="flex-1 border-t-2 border-green-600"></div>
+            <div class="flex-1 text-center">
+                <div class="w-10 h-10 bg-black text-white rounded-full mx-auto flex items-center justify-center mb-2">2</div>
+                <p class="text-xs font-medium">ÖZET</p>
+            </div>
+            <div class="flex-1 border-t-2 border-gray-300"></div>
+            <div class="flex-1 text-center">
+                <div class="w-10 h-10 bg-gray-300 text-gray-600 rounded-full mx-auto flex items-center justify-center mb-2">3</div>
+                <p class="text-xs text-gray-500">ONAY</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Order Review -->
+<section class="max-w-4xl mx-auto px-4 py-12">
+    <h1 class="text-2xl font-light mb-8">SİPARİŞİNİZİ ONAYLAYIN</h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Left: Order Details -->
+        <div class="lg:col-span-2 space-y-6">
+            
+            <!-- Teslimat Bilgileri -->
+            <div class="bg-white border border-gray-200 p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="font-medium">TESLİMAT BİLGİLERİ</h3>
+                    <a asp-action="Checkout" class="text-sm text-blue-600 hover:underline">Düzenle</a>
+                </div>
+                <div class="text-sm text-gray-700 space-y-2">
+                    <p><strong>Adres:</strong> @Model.ShippingAddress</p>
+                    <p><strong>Şehir:</strong> @Model.ShippingCity</p>
+                    @if (!string.IsNullOrEmpty(Model.ShippingZipCode))
+                    {
+                        <p><strong>Posta Kodu:</strong> @Model.ShippingZipCode</p>
+                    }
+                    <p><strong>Telefon:</strong> @Model.ShippingPhone</p>
+                    @if (!string.IsNullOrEmpty(Model.Notes))
+                    {
+                        <p><strong>Not:</strong> @Model.Notes</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Ürünler -->
+            <div class="bg-white border border-gray-200">
+                <div class="p-6 border-b border-gray-200">
+                    <h3 class="font-medium">ÜRÜNLER (@Model.Cart.TotalItems adet)</h3>
+                </div>
+                
+                @foreach (var item in Model.Cart.CartItems)
+                {
+                    <div class="p-6 border-b border-gray-200 last:border-b-0">
+                        <div class="flex items-center space-x-4">
+                            <!-- Image -->
+                            <div class="flex-shrink-0">
+                                <div class="relative overflow-hidden bg-gray-100" style="width: 80px; height: 80px;">
+                                    @if (!string.IsNullOrEmpty(item.Product.ImageUrl))
+                                    {
+                                        <img src="@item.Product.ImageUrl" alt="@item.Product.Name" class="w-full h-full object-cover" />
+                                    }
+                                    else
+                                    {
+                                        <div class="flex items-center justify-center h-full">
+                                            <i class="fas fa-image text-2xl text-gray-300"></i>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Info -->
+                            <div class="flex-1">
+                                <h4 class="font-medium mb-1">@item.Product.Name</h4>
+                                <p class="text-sm text-gray-600">Miktar: @item.Quantity</p>
+                                <p class="text-sm text-gray-600">Birim Fiyat: ₺@item.Product.Price.ToString("N2")</p>
+                            </div>
+
+                            <!-- Price -->
+                            <div class="text-right">
+                                <p class="font-medium">₺@item.SubTotal.ToString("N2")</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </div>
+
+        <!-- Right: Order Summary & Payment -->
+        <div class="lg:col-span-1">
+            <div class="bg-white border border-gray-200 p-6 sticky top-24">
+
+                <h3 class="font-medium mb-6">SİPARİŞ ÖZETİ</h3>
+
+                <div class="space-y-4 mb-6">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Ara Toplam</span>
+                        <span>₺@Model.Cart.TotalAmount.ToString("N2")</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Kargo</span>
+                        <span class="text-green-600">Ücretsiz</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">KDV (%20)</span>
+                        <span>Dahil</span>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-200 pt-4 mb-6">
+                    <div class="flex justify-between font-medium text-lg">
+                        <span>TOPLAM</span>
+                        <span>₺@Model.Cart.TotalAmount.ToString("N2")</span>
+                    </div>
+                </div>
+
+                <!-- Ödeme Yöntemi -->
+                <!-- Ödeme Yöntemi -->
+                <div class="mb-6">
+                    <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-700 mb-3">ÖDEME YÖNTEMİ SEÇİN</h4>
+
+                    <!-- Kapıda Ödeme -->
+                    <label class="block p-4 border-2 border-gray-300 hover:border-black cursor-pointer mb-3">
+                        <input type="radio" name="paymentMethod" value="cash" checked class="mr-3">
+                        <i class="fas fa-money-bill-wave text-green-600 mr-2"></i>
+                        <span class="font-medium">Kapıda Ödeme</span>
+                        <p class="text-xs text-gray-500 ml-8 mt-1">Siparişinizi teslim alırken nakit veya kredi kartı ile ödeyebilirsiniz.</p>
+                    </label>
+
+                    <!-- Kredi Kartı -->
+                    <label class="block p-4 border-2 border-gray-300 hover:border-black cursor-pointer opacity-50 cursor-not-allowed">
+                        <input type="radio" name="paymentMethod" value="credit-card" disabled class="mr-3">
+                        <i class="fas fa-credit-card text-blue-600 mr-2"></i>
+                        <span class="font-medium">Kredi Kartı</span>
+                        <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 ml-2">YAKINDA</span>
+                        <p class="text-xs text-gray-500 ml-8 mt-1">Kredi kartı ile ödeme yakında aktif olacaktır.</p>
+                    </label>
+                </div>
+
+                <!-- Onay Butonu -->
+                <form asp-action="Complete" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit"
+                            class="w-full bg-black text-white px-6 py-4 text-sm font-medium tracking-wider hover:bg-gray-800 mb-3">
+                        <i class="fas fa-check mr-2"></i>SİPARİŞİ ONAYLA
+                    </button>
+                </form>
+
+                <a asp-action="Checkout"
+                   class="block w-full text-center border border-gray-300 text-black px-6 py-4 text-sm font-medium tracking-wider hover:bg-gray-50">
+                    GERİ DÖN
+                </a>
+
+                <!-- Güvenlik -->
+                <div class="mt-6 text-center text-xs text-gray-500">
+                    <i class="fas fa-lock mr-1"></i>Güvenli Alışveriş
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>

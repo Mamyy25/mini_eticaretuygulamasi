@@ -1,0 +1,185 @@
+﻿@model ECommerce.Models.Product
+
+@{
+    ViewData["Title"] = "Ürün Düzenle";
+}
+
+<div class="max-w-4xl mx-auto px-4 py-12">
+
+    <!-- Başlık -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-semibold text-black">Ürün Düzenle</h1>
+        <p class="text-gray-600 mt-2">Ürün bilgilerini güncelleyin</p>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white border border-gray-200 p-8">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 mb-6 text-sm"></div>
+
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="ImageUrl" />
+            <input type="hidden" asp-for="CreatedAt" />
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- Sol Kolon -->
+                <div class="space-y-6">
+
+                    <!-- Ürün Adı -->
+                    <div>
+                        <label asp-for="Name" class="block text-sm font-medium text-gray-700 mb-2">
+                            Ürün Adı <span class="text-red-500">*</span>
+                        </label>
+                        <input asp-for="Name"
+                               class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-black text-sm"
+                               placeholder="Örn: iPhone 15 Pro">
+                        <span asp-validation-for="Name" class="text-red-500 text-sm"></span>
+                    </div>
+
+                    <!-- Kategori -->
+                    <div>
+                        <label asp-for="CategoryId" class="block text-sm font-medium text-gray-700 mb-2">
+                            Kategori <span class="text-red-500">*</span>
+                        </label>
+                        <select asp-for="CategoryId"
+                                asp-items="ViewBag.Categories"
+                                class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-black text-sm">
+                            <option value="">Kategori Seçin</option>
+                        </select>
+                        <span asp-validation-for="CategoryId" class="text-red-500 text-sm"></span>
+                    </div>
+
+                    <!-- Fiyat -->
+                    <div>
+                        <label asp-for="Price" class="block text-sm font-medium text-gray-700 mb-2">
+                            Fiyat (₺) <span class="text-red-500">*</span>
+                        </label>
+                        <input asp-for="Price"
+                               type="number"
+                               step="0.01"
+                               class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-black text-sm"
+                               placeholder="0.00">
+                        <span asp-validation-for="Price" class="text-red-500 text-sm"></span>
+                    </div>
+
+                    <!-- Stok -->
+                    <div>
+                        <label asp-for="Stock" class="block text-sm font-medium text-gray-700 mb-2">
+                            Stok Miktarı <span class="text-red-500">*</span>
+                        </label>
+                        <input asp-for="Stock"
+                               type="number"
+                               class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-black text-sm"
+                               placeholder="0">
+                        <span asp-validation-for="Stock" class="text-red-500 text-sm"></span>
+                    </div>
+
+                    <!-- Aktif Mi? -->
+                    <div>
+                        <label class="flex items-center">
+                            <input asp-for="IsActive" type="checkbox" class="w-4 h-4 text-black border-gray-300 focus:ring-black">
+                            <span class="ml-2 text-sm text-gray-700">Ürün aktif olsun</span>
+                        </label>
+                        <p class="text-xs text-gray-500 mt-1">Pasif ürünler müşterilere gösterilmez</p>
+                    </div>
+
+                    <!-- Bilgi -->
+                    <div class="bg-gray-50 border border-gray-200 px-4 py-3">
+                        <div class="text-sm text-gray-600">
+                            <div class="mb-1">
+                                <strong>Oluşturulma:</strong> @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                            </div>
+                            @if (Model.UpdatedAt.HasValue)
+                            {
+                            <div>
+                                <strong>Son Güncelleme:</strong> @Model.UpdatedAt.Value.ToString("dd.MM.yyyy HH:mm")
+                            </div>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Sağ Kolon -->
+                <div class="space-y-6">
+
+                    <!-- Açıklama -->
+                    <div>
+                        <label asp-for="Description" class="block text-sm font-medium text-gray-700 mb-2">
+                            Açıklama <span class="text-red-500">*</span>
+                        </label>
+                        <textarea asp-for="Description"
+                                  rows="6"
+                                  class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-black text-sm"
+                                  placeholder="Ürün açıklaması..."></textarea>
+                        <span asp-validation-for="Description" class="text-red-500 text-sm"></span>
+                    </div>
+
+                    <!-- Mevcut Resim -->
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Mevcut Resim
+                        </label>
+                        <img src="@Model.ImageUrl" alt="@Model.Name" class="w-full h-48 object-cover border border-gray-200 mb-4">
+                    </div>
+                    }
+
+                    <!-- Yeni Resim Yükleme -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Yeni Resim Yükle (Opsiyonel)
+                        </label>
+                        <div class="border-2 border-dashed border-gray-300 p-6 text-center hover:border-black transition">
+                            <input type="file"
+                                   name="imageFile"
+                                   id="imageFile"
+                                   accept="image/*"
+                                   class="hidden"
+                                   onchange="previewImage(event)">
+                            <label for="imageFile" class="cursor-pointer">
+                                <div id="imagePreview" class="mb-4">
+                                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-400"></i>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-2">Yeni resim seçmek için tıklayın</p>
+                                <p class="text-xs text-gray-500">PNG, JPG, JPEG (Maks. 5MB)</p>
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Butonlar -->
+            <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200 mt-8">
+                <a asp-action="Index" class="px-6 py-3 border border-gray-300 text-gray-700 hover:bg-gray-50 text-sm font-medium">
+                    İptal
+                </a>
+                <button type="submit" class="bg-black text-white px-6 py-3 hover:bg-gray-800 text-sm font-medium">
+                    <i class="fas fa-save mr-2"></i>Değişiklikleri Kaydet
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function previewImage(event) {
+    const file = event.target.files[0];
+    const preview = document.getElementById('imagePreview');
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML = '<img src="' + e.target.result + '" class="max-w-full h-48 mx-auto object-contain">';
+        }
+        reader.readAsDataURL(file);
+    }
+}
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

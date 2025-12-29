@@ -1,0 +1,134 @@
+﻿@model ECommerce.Models.Order
+
+@{
+    ViewData["Title"] = "Sipariş Onayı";
+}
+
+<!-- Progress Bar -->
+<section class="bg-gray-50 py-8">
+    <div class="max-w-4xl mx-auto px-4">
+        <div class="flex items-center justify-between">
+            <div class="flex-1 text-center">
+                <div class="w-10 h-10 bg-green-600 text-white rounded-full mx-auto flex items-center justify-center mb-2">
+                    <i class="fas fa-check"></i>
+                </div>
+                <p class="text-xs font-medium text-green-600">TESLİMAT</p>
+            </div>
+            <div class="flex-1 border-t-2 border-green-600"></div>
+            <div class="flex-1 text-center">
+                <div class="w-10 h-10 bg-green-600 text-white rounded-full mx-auto flex items-center justify-center mb-2">
+                    <i class="fas fa-check"></i>
+                </div>
+                <p class="text-xs font-medium text-green-600">ÖZET</p>
+            </div>
+            <div class="flex-1 border-t-2 border-green-600"></div>
+            <div class="flex-1 text-center">
+                <div class="w-10 h-10 bg-green-600 text-white rounded-full mx-auto flex items-center justify-center mb-2">
+                    <i class="fas fa-check"></i>
+                </div>
+                <p class="text-xs font-medium text-green-600">ONAY</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Success Message -->
+<section class="max-w-4xl mx-auto px-4 py-12 text-center">
+    
+    <div class="mb-8">
+        <div class="inline-block bg-green-100 rounded-full p-6 mb-6">
+            <i class="fas fa-check-circle text-6xl text-green-600"></i>
+        </div>
+        <h1 class="text-3xl font-light mb-4">SİPARİŞİNİZ ALINDI!</h1>
+        <p class="text-gray-600 mb-2">Sipariş numaranız: <strong>#@Model.Id</strong></p>
+        <p class="text-sm text-gray-500">Siparişiniz hazırlanıyor ve en kısa sürede kargoya verilecektir.</p>
+    </div>
+
+    <!-- Order Summary Box -->
+    <div class="bg-white border border-gray-200 p-8 mb-8 text-left max-w-2xl mx-auto">
+        
+        <h2 class="text-lg font-medium mb-6">SİPARİŞ ÖZETİ</h2>
+
+        <div class="grid grid-cols-2 gap-4 text-sm mb-6">
+            <div>
+                <p class="text-gray-600 mb-1">Sipariş Tarihi</p>
+                <p class="font-medium">@Model.OrderDate.ToString("dd MMMM yyyy, HH:mm")</p>
+            </div>
+            <div>
+                <p class="text-gray-600 mb-1">Toplam Tutar</p>
+                <p class="font-medium text-lg">₺@Model.TotalAmount.ToString("N2")</p>
+            </div>
+            <div class="col-span-2">
+                <p class="text-gray-600 mb-1">Teslimat Adresi</p>
+                <p class="font-medium">@Model.ShippingAddress, @Model.ShippingCity</p>
+            </div>
+            <div>
+                <p class="text-gray-600 mb-1">Telefon</p>
+                <p class="font-medium">@Model.ShippingPhone</p>
+            </div>
+            <div>
+                <p class="text-gray-600 mb-1">Durum</p>
+                <span class="inline-block bg-yellow-100 text-yellow-800 px-3 py-1 text-xs font-medium">
+                    HAZIRLANıYOR
+                </span>
+            </div>
+        </div>
+
+        <!-- Products -->
+        <div class="border-t border-gray-200 pt-6">
+            <h3 class="font-medium mb-4">ÜRÜNLER</h3>
+            <div class="space-y-4">
+                @foreach (var item in Model.OrderItems)
+                {
+                    <div class="flex items-center justify-between text-sm">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-gray-100 flex items-center justify-center">
+                                @if (!string.IsNullOrEmpty(item.Product?.ImageUrl))
+                                {
+                                    <img src="@item.Product.ImageUrl" alt="@item.ProductName" class="w-full h-full object-cover" />
+                                }
+                                else
+                                {
+                                    <i class="fas fa-image text-gray-300"></i>
+                                }
+                            </div>
+                            <div>
+                                <p class="font-medium">@item.ProductName</p>
+                                <p class="text-gray-500">@item.Quantity x ₺@item.Price.ToString("N2")</p>
+                            </div>
+                        </div>
+                        <p class="font-medium">₺@((item.Quantity * item.Price).ToString("N2"))</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
+        <a asp-action="MyOrders" 
+           class="flex-1 bg-black text-white px-6 py-3 text-sm font-medium tracking-wider hover:bg-gray-800 text-center">
+            <i class="fas fa-list mr-2"></i>SİPARİŞLERİM
+        </a>
+        <a asp-controller="Home" asp-action="Index" 
+           class="flex-1 border border-gray-300 text-black px-6 py-3 text-sm font-medium tracking-wider hover:bg-gray-50 text-center">
+            <i class="fas fa-home mr-2"></i>ANA SAYFA
+        </a>
+    </div>
+
+    <!-- Info Box -->
+    <div class="mt-12 bg-blue-50 border border-blue-200 p-6 max-w-2xl mx-auto text-left">
+        <h3 class="font-medium mb-3 flex items-center">
+            <i class="fas fa-info-circle text-blue-600 mr-2"></i>
+            BİLGİLENDİRME
+        </h3>
+        <ul class="text-sm text-gray-700 space-y-2">
+            <li>• Siparişinizin durumunu <a asp-action="MyOrders" class="text-blue-600 hover:underline">Siparişlerim</a> sayfasından takip edebilirsiniz.</li>
+            <li>• Kargo bilgileriniz e-posta adresinize gönderilecektir.</li>
+            <li>• Siparişiniz 2-3 iş günü içinde kargoya verilecektir.</li>
+            <li>• Herhangi bir sorun için müşteri hizmetlerimizle iletişime geçebilirsiniz.</li>
+        </ul>
+    </div>
+
+</section>

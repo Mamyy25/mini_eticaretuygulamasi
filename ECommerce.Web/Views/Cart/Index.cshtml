@@ -1,0 +1,212 @@
+@model ECommerce.Models.Cart
+
+@{
+    ViewData["Title"] = "Sepetim";
+}
+
+<!-- Page Header -->
+<section class="bg-gray-50 py-12">
+    <div class="max-w-6xl mx-auto px-4">
+        <h1 class="text-3xl font-light tracking-tight mb-2">SEPETİM</h1>
+        <p class="text-sm text-gray-600">
+            @if (Model.CartItems.Any())
+            {
+            <span>@Model.TotalItems ürün</span>
+            }
+            else
+            {
+            <span>Sepetiniz boş</span>
+            }
+        </p>
+    </div>
+</section>
+
+@if (TempData["Success"] != null)
+{
+<div class="max-w-6xl mx-auto px-4 mt-6">
+    <div class="bg-green-50 border border-green-200 text-green-800 px-6 py-4 text-sm">
+        <i class="fas fa-check-circle mr-2"></i>@TempData["Success"]
+    </div>
+</div>
+}
+
+@if (TempData["Error"] != null)
+{
+<div class="max-w-6xl mx-auto px-4 mt-6">
+    <div class="bg-red-50 border border-red-200 text-red-800 px-6 py-4 text-sm">
+        <i class="fas fa-exclamation-circle mr-2"></i>@TempData["Error"]
+    </div>
+</div>
+}
+
+<section class="max-w-6xl mx-auto px-4 py-12">
+    @if (Model.CartItems.Any())
+    {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- Cart Items -->
+        <div class="lg:col-span-2">
+            <div class="bg-white border border-gray-200">
+
+                @foreach (var item in Model.CartItems)
+                    {
+                <div class="p-6 border-b border-gray-200 last:border-b-0">
+                    <div class="flex items-center space-x-6">
+
+                        <!-- Product Image -->
+                        <div class="flex-shrink-0">
+                            <div class="relative overflow-hidden bg-gray-100" style="width: 100px; height: 100px;">
+                                @if (!string.IsNullOrEmpty(item.Product.ImageUrl))
+                                        {
+                                <img src="@item.Product.ImageUrl" alt="@item.Product.Name" class="w-full h-full object-cover" />
+                                        }
+                                        else
+                                        {
+                                <div class="flex items-center justify-center h-full">
+                                    <i class="fas fa-image text-3xl text-gray-300"></i>
+                                </div>
+                                        }
+                            </div>
+                        </div>
+
+                        <!-- Product Info -->
+                        <div class="flex-1">
+                            <h3 class="font-medium mb-1">
+                                <a href="/Product/Details/@item.ProductId" class="hover:underline">
+                                    @item.Product.Name
+                                </a>
+                            </h3>
+                            <p class="text-sm text-gray-600 mb-2">@item.Product.Category?.Name</p>
+                            <p class="font-medium">₺@item.Product.Price.ToString("N2")</p>
+                        </div>
+
+                        <!-- Quantity & Actions -->
+                        <div class="flex flex-col items-end space-y-3">
+
+                            <!-- Quantity -->
+                            <div class="flex items-center border border-gray-300">
+                                <button onclick="updateQuantity(@item.Id, @(item.Quantity - 1))"
+                                        class="px-3 py-2 hover:bg-gray-100"
+                                        @(item.Quantity <= 1 ? "disabled" : "")>
+                                    <i class="fas fa-minus text-xs"></i>
+                                </button>
+                                <span class="px-4 py-2 border-x border-gray-300" id="quantity-@item.Id">@item.Quantity</span>
+                                <button onclick="updateQuantity(@item.Id, @(item.Quantity + 1))"
+                                        class="px-3 py-2 hover:bg-gray-100"
+                                        @(item.Quantity >= item.Product.Stock ? "disabled" : "")>
+                                    <i class="fas fa-plus text-xs"></i>
+                                </button>
+                            </div>
+
+                            <!-- Subtotal -->
+                            <p class="font-medium" id="subtotal-@item.Id">₺@item.SubTotal.ToString("N2")</p>
+
+                            <!-- Remove Button -->
+                            <form asp-action="RemoveFromCart" method="post" class="inline">
+                                <input type="hidden" name="cartItemId" value="@item.Id" />
+                                <button type="submit" class="text-red-600 hover:text-red-800 text-sm">
+                                    <i class="fas fa-trash mr-1"></i>Kaldır
+                                </button>
+                            </form>
+
+                        </div>
+
+                    </div>
+                </div>
+                    }
+
+            </div>
+
+            <!-- Clear Cart Button -->
+            <div class="mt-4">
+                <form asp-action="ClearCart" method="post" onsubmit="return confirm('Sepeti temizlemek istediğinizden emin misiniz?')">
+                    <button type="submit" class="text-red-600 hover:text-red-800 text-sm">
+                        <i class="fas fa-trash mr-2"></i>Sepeti Temizle
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="lg:col-span-1">
+            <div class="bg-white border border-gray-200 p-6 sticky top-24">
+                <h2 class="text-lg font-medium mb-6">SİPARİŞ ÖZETİ</h2>
+
+                <div class="space-y-4 mb-6">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Ara Toplam</span>
+                        <span id="totalAmount">₺@Model.TotalAmount.ToString("N2")</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Kargo</span>
+                        <span class="text-green-600">Ücretsiz</span>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-200 pt-4 mb-6">
+                    <div class="flex justify-between font-medium text-lg">
+                        <span>Toplam</span>
+                        <span id="grandTotal">₺@Model.TotalAmount.ToString("N2")</span>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">KDV Dahil</p>
+                </div>
+
+                <a href="/Order/Checkout"
+                   class="block w-full bg-black text-white text-center px-6 py-4 text-sm font-medium tracking-wider hover:bg-gray-800 mb-3">
+                    SİPARİŞİ TAMAMLA
+                </a>
+
+                <a href="/Product/Index"
+                   class="block w-full text-center border border-gray-300 text-black px-6 py-4 text-sm font-medium tracking-wider hover:bg-gray-50">
+                    ALIŞVERİŞE DEVAM ET
+                </a>
+            </div>
+        </div>
+
+    </div>
+    }
+    else
+    {
+ <!-- Empty Cart -->
+    <div class="text-center py-16 bg-gray-50">
+        <i class="fas fa-shopping-bag text-6xl text-gray-300 mb-4"></i>
+        <h2 class="text-2xl font-light mb-2">Sepetiniz Boş</h2>
+        <p class="text-gray-600 mb-8">Alışverişe başlamak için ürünlerimize göz atın</p>
+        <a href="/Product/Index"
+           class="inline-block bg-black text-white px-8 py-3 text-sm font-medium tracking-wider hover:bg-gray-800">
+            ÜRÜNLERİ KEŞFET
+        </a>
+    </div>
+    }
+</section>
+
+@section Scripts {
+    <script>
+        async function updateQuantity(cartItemId, quantity) {
+            try {
+                const response = await fetch('/Cart/UpdateQuantity', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ cartItemId, quantity })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update UI
+                    document.getElementById('quantity-' + cartItemId).textContent = quantity;
+                    document.getElementById('subtotal-' + cartItemId).textContent = '₺' + data.subTotal;
+                    document.getElementById('totalAmount').textContent = '₺' + data.totalAmount;
+                    document.getElementById('grandTotal').textContent = '₺' + data.totalAmount;
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Bir hata oluştu!');
+            }
+        }
+    </script>
+}
